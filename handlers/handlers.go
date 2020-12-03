@@ -128,15 +128,15 @@ func ListNews(ctx context.Context, client models.RssClient) error {
 
 	for i := len(news.Articles) - 1; i >= 0; i-- {
 		article := news.Articles[i]
+		ui.PrintfNotice("%s\n",
+			strings.Repeat("-", 50),
+		)
 		ui.PrintfWarning("%d - %s\n\n",
 			i+1,
 			article.Title,
 		)
 		ui.PrintfInfo("Link - %s\n",
 			article.Url,
-		)
-		ui.PrintfNotice("%s\n",
-			strings.Repeat("-", 50),
 		)
 	}
 

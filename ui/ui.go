@@ -10,7 +10,7 @@ const (
 )
 
 func ClearScreen() {
-	print(clearEscape)
+	fmt.Print(clearEscape)
 }
 
 func PrintfNotice(format string, args ...interface{}) {

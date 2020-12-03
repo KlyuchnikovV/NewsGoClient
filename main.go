@@ -73,7 +73,7 @@ func mainMenu(client models.RssClient) {
 
 	var ctx = context.Background()
 	for {
-		ui.PrintfNotice("%s", strings.Repeat("-", 20))
+		ui.PrintfNotice("%s", strings.Repeat("-", 50))
 		for _, menu := range menus {
 			ui.PrintfNotice("%c - %s", menu.Key, menu.Header)
 		}
