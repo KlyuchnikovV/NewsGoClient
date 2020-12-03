@@ -18,7 +18,6 @@ const (
 	address = "localhost:50051"
 )
 
-// "http://feeds.twit.tv/twit.xml"
 func main() {
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
@@ -34,10 +33,7 @@ func main() {
 	}
 	logrus.Printf("Pinged. Ready to work...")
 
-
-	if err := mainMenu(client); err != nil {
-		logrus.Fatal(err)
-	}
+	mainMenu(client)
 }
 
 var menus = []ui.MenuElement{
@@ -72,31 +68,34 @@ var menus = []ui.MenuElement{
 	},
 }
 
-func mainMenu(client models.RssClient) error {
+func mainMenu(client models.RssClient) {
 	ui.ClearScreen()
 
-	var err error
 	var ctx = context.Background()
-	for err == nil {
-		ui.PrintfNotice("%s\n", strings.Repeat("-", 10))
+	for {
+		ui.PrintfNotice("%s", strings.Repeat("-", 20))
 		for _, menu := range menus {
-			ui.PrintfNotice("%c - %s\n", menu.Key, menu.Header)
+			ui.PrintfNotice("%c - %s", menu.Key, menu.Header)
 		}
-		var ch rune
-		if ch, _, err = keyboard.GetSingleKey(); err != nil {
+		ch, _, err := keyboard.GetSingleKey()
+		if err != nil {
+			logrus.Error(err.Error())
+			ui.PrintfError(err.Error())
 			break
 		}
 		ui.ClearScreen()
 		menu, ok := ui.FindMenu(menus, ch)
 		if ok {
 			if menu.Handler == nil {
-				ui.PrintfInfo("Exiting...\n")
+				ui.PrintfInfo("Exiting...")
 				break
 			}
-			err = menu.Handler(ctx, client)
+
+			if err := menu.Handler(ctx, client); err != nil {
+				ui.PrintfError(err.Error())
+			}
 		} else {
-			ui.PrintfError("Wrong key pressed - %c\n", ch)
+			ui.PrintfError("Wrong key pressed - %c", ch)
 		}
 	}
-	return err
 }

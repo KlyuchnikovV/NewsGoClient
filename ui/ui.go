@@ -29,5 +29,5 @@ func PrintfError(format string, args ...interface{}) {
 }
 
 func print(format string, args ...interface{}) {
-	fmt.Printf(format, args...)
+	fmt.Printf(format+"\n", args...)
 }

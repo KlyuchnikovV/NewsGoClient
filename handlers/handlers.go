@@ -20,7 +20,7 @@ func Start(ctx context.Context, client models.RssClient) error {
 	defer cancel()
 	_, err := client.Start(ctx, &empty.Empty{})
 	if err == nil {
-		ui.PrintfNotice("Server started\n")
+		ui.PrintfNotice("Server started")
 	} else {
 		ui.PrintfError(err.Error())
 	}
@@ -32,7 +32,7 @@ func Stop(ctx context.Context, client models.RssClient) error {
 	defer cancel()
 	_, err := client.Stop(ctx, &empty.Empty{})
 	if err == nil {
-		ui.PrintfNotice("Server stopped\n")
+		ui.PrintfNotice("Server stopped")
 	} else {
 		ui.PrintfError(err.Error())
 	}
@@ -68,7 +68,7 @@ func AddRss(ctx context.Context, client models.RssClient) error {
 		},
 	})
 	if err == nil {
-		ui.PrintfNotice("Rss link '%s' added\n", *link)
+		ui.PrintfNotice("Rss link '%s' added", *link)
 	}
 	return err
 }
@@ -92,22 +92,22 @@ func GetNews(ctx context.Context, client models.RssClient) error {
 		return err
 	}
 	if news == nil || news.Articles == nil {
-		ui.PrintfWarning("No news found for request string '%s'\n", *request)
+		ui.PrintfWarning("No news found for request string '%s'", *request)
 	}
 
 	for i := len(news.Articles) - 1; i >= 0; i-- {
 		article := news.Articles[i]
-		ui.PrintfWarning("%d - %s\n\n",
+		ui.PrintfWarning("%d - %s\n",
 			i+1,
 			article.Title,
 		)
-		ui.PrintfNotice("%s\n",
+		ui.PrintfNotice("%s",
 			article.Text,
 		)
-		ui.PrintfInfo("Link - %s\n",
+		ui.PrintfInfo("Link - %s",
 			article.Url,
 		)
-		ui.PrintfNotice("%s\n",
+		ui.PrintfNotice("%s",
 			strings.Repeat("-", 50),
 		)
 	}
@@ -123,7 +123,7 @@ func ListNews(ctx context.Context, client models.RssClient) error {
 		return err
 	}
 	if news == nil || news.Articles == nil {
-		ui.PrintfWarning("No news found.\n")
+		ui.PrintfWarning("No news found.")
 	}
 
 	for i := len(news.Articles) - 1; i >= 0; i-- {
