@@ -20,7 +20,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}/server/main.go",
             "env": {},
-            "args": []
+            "args": ["--port=8080"]
         }
     ]
 }

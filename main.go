@@ -2,6 +2,10 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"os"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/eiannone/keyboard"
@@ -14,13 +18,21 @@ import (
 	"main/ui"
 )
 
-const (
-	address = "localhost:50051"
+var (
+	port int64 = 50051
 )
+
+func init() {
+	if len(os.Args) > 1 {
+		if err := parseArguments(os.Args[1:]); err != nil {
+			logrus.Fatalf("Can't parse arguments (cause: %s)", err.Error())
+		}
+	}
+}
 
 func main() {
 	// Set up a connection to the server.
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(fmt.Sprintf("localhost:%d", port), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		logrus.Fatalf("did not connect: %v", err)
 	}
@@ -53,8 +65,8 @@ var menus = []ui.MenuElement{
 		Handler: handlers.AddRss,
 	},
 	{
-		Key: '4',
-		Header: "Add url link",
+		Key:     '4',
+		Header:  "Add url link",
 		Handler: handlers.AddUrl,
 	},
 	{
@@ -103,4 +115,32 @@ func mainMenu(client models.RssClient) {
 			ui.PrintfError("Wrong key pressed - %c", ch)
 		}
 	}
+}
+
+// Format "--<key>=<value>"
+func parseArguments(args []string) error {
+	r := regexp.MustCompile(`^--([a-z-]+)=([a-z0-9\.]+)$`)
+	for _, arg := range args {
+		var err error
+		values := r.FindAllStringSubmatch(arg, 1)
+		if len(values[0]) != 1 && len(values[0]) != 3 {
+			return fmt.Errorf("wrong argument %s", arg)
+		}
+		switch values[0][1] {
+		case "port":
+			port, err = strconv.ParseInt(values[0][2], 10, 64)
+			if err != nil {
+				break
+			}
+			if port < 0 || port > 65536 {
+				err = fmt.Errorf("wrong port defined %d", port)
+			}
+		default:
+			err = fmt.Errorf("unknown argument %s", arg)
+		}
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
