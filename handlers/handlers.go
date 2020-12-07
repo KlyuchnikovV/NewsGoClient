@@ -73,6 +73,43 @@ func AddRss(ctx context.Context, client models.RssClient) error {
 	return err
 }
 
+func AddUrl(ctx context.Context, client models.RssClient) error {
+	link, err := ui.ReadLineOrAbort("Enter url link", ui.AbortKeyword)
+	if err != nil || link == nil {
+		return err
+	}
+
+	seconds, err := ui.ReadInt64OrAbort("Enter the polling period of the source (in seconds)\n or leave it empty for default value (60 seconds)\n", ui.AbortKeyword)
+	if err != nil {
+		return err
+	}
+	if seconds == nil {
+		return nil
+	}
+	if *seconds == 0 {
+		*seconds = 60
+	}
+
+	rule, err := ui.ReadLineOrAbort("Enter parsing rule (in css format)", ui.AbortKeyword)
+	if err != nil || rule == nil {
+		return err
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, contextTimeout)
+	defer cancel()
+	_, err = client.AddUrl(ctx, &models.UrlLink{
+		Url: *link,
+		Duration: &timestamp.Timestamp{
+			Seconds: *seconds,
+		},
+		Rule: *rule,
+	})
+	if err == nil {
+		ui.PrintfNotice("Rss link '%s' added", *link)
+	}
+	return err
+}
+
 func GetNews(ctx context.Context, client models.RssClient) error {
 	request, err := ui.ReadLineOrAbort("Enter request ", "")
 	if err != nil {

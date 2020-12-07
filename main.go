@@ -53,12 +53,17 @@ var menus = []ui.MenuElement{
 		Handler: handlers.AddRss,
 	},
 	{
-		Key:     '4',
+		Key: '4',
+		Header: "Add url link",
+		Handler: handlers.AddUrl,
+	},
+	{
+		Key:     '5',
 		Header:  "List news",
 		Handler: handlers.ListNews,
 	},
 	{
-		Key:     '5',
+		Key:     '6',
 		Header:  "Get news",
 		Handler: handlers.GetNews,
 	},

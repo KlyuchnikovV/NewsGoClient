@@ -10,6 +10,13 @@ message RssLink {
     google.protobuf.Timestamp duration = 2;
 }
 
+message UrlLink {
+    string url = 1;
+    google.protobuf.Timestamp duration = 2;
+    string rule = 3;
+}
+
+
 message GetRequest {
     string request = 1;
 }
@@ -31,4 +38,5 @@ service Rss {
     rpc AddRss(RssLink) returns (google.protobuf.Empty);
     rpc GetNews(GetRequest) returns (News);
     rpc ListNews(google.protobuf.Empty) returns (News);
+    rpc AddUrl(UrlLink) returns (google.protobuf.Empty);
 }

@@ -24,6 +24,7 @@ type RssClient interface {
 	AddRss(ctx context.Context, in *RssLink, opts ...grpc.CallOption) (*empty.Empty, error)
 	GetNews(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*News, error)
 	ListNews(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*News, error)
+	AddUrl(ctx context.Context, in *UrlLink, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
 type rssClient struct {
@@ -88,6 +89,15 @@ func (c *rssClient) ListNews(ctx context.Context, in *empty.Empty, opts ...grpc.
 	return out, nil
 }
 
+func (c *rssClient) AddUrl(ctx context.Context, in *UrlLink, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/models.Rss/AddUrl", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RssServer is the server API for Rss service.
 // All implementations must embed UnimplementedRssServer
 // for forward compatibility
@@ -98,6 +108,7 @@ type RssServer interface {
 	AddRss(context.Context, *RssLink) (*empty.Empty, error)
 	GetNews(context.Context, *GetRequest) (*News, error)
 	ListNews(context.Context, *empty.Empty) (*News, error)
+	AddUrl(context.Context, *UrlLink) (*empty.Empty, error)
 	mustEmbedUnimplementedRssServer()
 }
 
@@ -122,6 +133,9 @@ func (UnimplementedRssServer) GetNews(context.Context, *GetRequest) (*News, erro
 }
 func (UnimplementedRssServer) ListNews(context.Context, *empty.Empty) (*News, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListNews not implemented")
+}
+func (UnimplementedRssServer) AddUrl(context.Context, *UrlLink) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddUrl not implemented")
 }
 func (UnimplementedRssServer) mustEmbedUnimplementedRssServer() {}
 
@@ -244,6 +258,24 @@ func _Rss_ListNews_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Rss_AddUrl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UrlLink)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RssServer).AddUrl(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/models.Rss/AddUrl",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RssServer).AddUrl(ctx, req.(*UrlLink))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Rss_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "models.Rss",
 	HandlerType: (*RssServer)(nil),
@@ -271,6 +303,10 @@ var _Rss_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListNews",
 			Handler:    _Rss_ListNews_Handler,
+		},
+		{
+			MethodName: "AddUrl",
+			Handler:    _Rss_AddUrl_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

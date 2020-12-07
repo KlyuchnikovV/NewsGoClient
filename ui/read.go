@@ -10,12 +10,12 @@ const (
 	AbortKeyword = "abort"
 )
 
-func ReadLineOrAbort(msg, keyword string) (*string, error) {
-	s, err := ReadLine(fmt.Sprintf("%s (or type '%s' to abort): ", msg, keyword))
+func ReadLineOrAbort(msg, abortKeyword string) (*string, error) {
+	s, err := ReadLine(fmt.Sprintf("%s (or type '%s' to abort): ", msg, abortKeyword))
 	if err != nil {
 		return nil, err
 	}
-	if strings.ToLower(s) == keyword {
+	if strings.ToLower(s) == abortKeyword {
 		PrintfInfo("Aborting...\n")
 		return nil, nil
 	}
